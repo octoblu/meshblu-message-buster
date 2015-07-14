@@ -1,0 +1,25 @@
+{
+  "name": "meshblu-message-buster",
+  "version": "1.0.0",
+  "description": "Meshblu Message Bus Tester",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit 0",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/octoblu/meshblu-message-buster.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/octoblu/meshblu-message-buster/issues"
+  },
+  "homepage": "https://github.com/octoblu/meshblu-message-buster#readme",
+  "dependencies": {
+    "debug": "^2.2.0",
+    "lodash": "^3.10.0",
+    "meshblu": "^1.29.0"
+  }
+}
