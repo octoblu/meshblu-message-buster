@@ -7,3 +7,6 @@ OnStartupSec=1 minute
 
 [Install]
 WantedBy=timers.target
+
+[X-Fleet]
+X-ConditionMachineOf=meshblu-message-buster.service
