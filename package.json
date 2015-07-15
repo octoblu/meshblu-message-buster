@@ -1,6 +1,6 @@
 {
   "name": "meshblu-message-buster",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Meshblu Message Bus Tester",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,6 @@
     "debug": "^2.2.0",
     "lodash": "^3.10.0",
     "meshblu": "^1.29.0",
-    "meshblu-config": "^2.0.0",
-    "statuspage-api": "^0.4.0"
+    "meshblu-config": "^2.0.0"
   }
 }

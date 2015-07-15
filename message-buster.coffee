@@ -18,7 +18,7 @@ class MessageBuster
       debug 'received message', message
       delete @pendingMessages[message.id]
 
-    setInterval =>
+    @interval = setInterval =>
       @conn.message
         devices: [@meshbluJSON.uuid]
         topic: 'hello-my-friend'
@@ -36,6 +36,16 @@ class MessageBuster
 
     @conn.on 'notReady', (error) =>
       debug 'notReady', error
+
+    @conn.on 'disconnect', (error) =>
+      debug 'disconnect', error
+
+  restart: =>
+    debug 'restart'
+    clearInterval @interval
+    @conn.close()
+    @pendingMessages = {}
+    @start()
 
   getPendingMessages: => @pendingMessages
   clearPendingMessages: => @pendingMessages = {}

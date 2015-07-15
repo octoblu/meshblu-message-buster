@@ -1,9 +1,9 @@
-MessageBuster = require './message-buster'
-Notify        = require './notify'
 _             = require 'lodash'
 debug         = require('debug')('meshblu-message-buster:index')
-
 MeshbluConfig = require 'meshblu-config'
+MessageBuster = require './message-buster'
+Notify        = require './notify'
+
 meshbluConfig = new MeshbluConfig {}
 
 debug 'starting message buster'
@@ -24,5 +24,9 @@ setInterval =>
 
   debug 'pending messages', numberOfMessages
   notify.cloudWatch numberOfMessages
-  notify.statusPageIo numberOfMessages
 , 5000
+
+setInterval =>
+  debug 'restart'
+  messageBuster.restart()
+, 30000
