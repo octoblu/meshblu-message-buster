@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/octoblu/meshblu-message-buster#readme",
   "dependencies": {
+    "coffee-script": "^1.9.3",
     "debug": "^2.2.0",
     "lodash": "^3.10.0",
     "meshblu": "^1.29.0"
