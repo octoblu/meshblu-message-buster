@@ -12,18 +12,18 @@ messageBuster.start()
 
 setInterval =>
   pendingMessages = messageBuster.getPendingMessages()
-
   ohUhMessages = _.filter _.keys(pendingMessages), (id) =>
     FIVESECONDSAGO = _.now() - 5000;
     return pendingMessages[id] < FIVESECONDSAGO
 
   numberOfMessages = _.size(ohUhMessages)
-  return debug 'no pending messages' unless numberOfMessages
 
+  messageBuster.clearPendingMessages() if numberOfMessages > 100
+  
   debug 'notifying cloudwatch', numberOfMessages
+
   child = exec "./notifyCloudWatch.sh #{numberOfMessages}", (error, stdout, stderr) =>
     debug 'notify stdout', stdout
     debug 'notify stderr', stderr
     debug 'notify exec error: ', error if error?
-    messageBuster.clearPendingMessages()
-, 3000
+, 5000
