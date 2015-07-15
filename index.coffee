@@ -1,13 +1,13 @@
 MessageBuster = require './message-buster'
-meshbluJSON   = require './meshblu.json'
 {exec}        = require 'child_process'
 _             = require 'lodash'
 debug         = require('debug')('meshblu-message-buster:index')
 
-meshbluJSON.options = transports: ['websocket']
+MeshbluConfig = require 'meshblu-config'
+meshbluConfig = new MeshbluConfig {}
 
 debug 'starting message buster'
-messageBuster = new MessageBuster meshbluJSON
+messageBuster = new MessageBuster meshbluConfig.toJSON()
 messageBuster.start()
 
 setInterval =>
@@ -19,7 +19,7 @@ setInterval =>
   numberOfMessages = _.size(ohUhMessages)
 
   messageBuster.clearPendingMessages() if numberOfMessages > 100
-  
+
   debug 'notifying cloudwatch', numberOfMessages
 
   child = exec "./notifyCloudWatch.sh #{numberOfMessages}", (error, stdout, stderr) =>

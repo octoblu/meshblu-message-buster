@@ -4,6 +4,7 @@ debug       = require('debug')('meshblu-message-buster:message-buster')
 
 class MessageBuster
   constructor: (@meshbluJSON={}) ->
+    @meshbluJSON.options = transports: ['websocket'];
     @pendingMessages = {}
     @iter = 0
 
