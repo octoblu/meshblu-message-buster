@@ -1,5 +1,5 @@
 MessageBuster = require './message-buster'
-{exec}        = require 'child_process'
+Notify        = require './notify'
 _             = require 'lodash'
 debug         = require('debug')('meshblu-message-buster:index')
 
@@ -9,6 +9,8 @@ meshbluConfig = new MeshbluConfig {}
 debug 'starting message buster'
 messageBuster = new MessageBuster meshbluConfig.toJSON()
 messageBuster.start()
+
+notify = new Notify
 
 setInterval =>
   pendingMessages = messageBuster.getPendingMessages()
@@ -20,10 +22,7 @@ setInterval =>
 
   messageBuster.clearPendingMessages() if numberOfMessages > 100
 
-  debug 'notifying cloudwatch', numberOfMessages
-
-  child = exec "./notifyCloudWatch.sh #{numberOfMessages}", (error, stdout, stderr) =>
-    debug 'notify stdout', stdout
-    debug 'notify stderr', stderr
-    debug 'notify exec error: ', error if error?
+  debug 'pending messages', numberOfMessages
+  notify.cloudWatch numberOfMessages
+  notify.statusPageIo numberOfMessages
 , 5000
