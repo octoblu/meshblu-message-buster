@@ -1,0 +1,17 @@
+[Unit]
+Description=Report CloudWatch Meshblu Bus Notify to AWS
+Requires=docker.service
+
+[Service]
+Type=simple
+Restart=always
+TimeoutStartSec=300
+ExecStartPre=-/usr/bin/docker kill meshblu-message-buster
+ExecStartPre=-/usr/bin/docker rm meshblu-message-buster
+ExecStart=/bin/sh -c '/usr/bin/docker run \
+  --name meshblu-message-buster \
+  --volume /var/run/fleet.sock:/var/run/fleet.sock \
+  --env AWS_DEFAULT_REGION=$(/usr/bin/etcdctl get aws/region) \
+  --env AWS_ACCESS_KEY_ID=$(/usr/bin/etcdctl get aws/access_key_id) \
+  --env AWS_SECRET_ACCESS_KEY=$(/usr/bin/etcdctl get aws/secret_access_key) \
+  octoblu/meshblu-message-buster:latest'

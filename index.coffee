@@ -1,24 +1,29 @@
-meshblu     = require 'meshblu'
-meshbluJSON = require './meshblu.json'
-debug       = require('debug')('meshblu-message-buster')
+MessageBuster = require './message-buster'
+meshbluJSON   = require './meshblu.json'
+{exec}        = require 'child_process'
+_             = require 'lodash'
+debug         = require('debug')('meshblu-message-buster:index')
 
-conn = meshblu.createConnection meshbluJSON
+meshbluJSON.options = transports: ['websocket']
 
-i = 0
-conn.once 'ready', (config) =>
-  debug 'onReady', config
-  conn.subscribe uuid: meshbluJSON.uuid
-  conn.on 'message', (message) =>
-    debug 'received message', message
+debug 'starting message buster'
+messageBuster = new MessageBuster meshbluJSON
+messageBuster.start()
 
-  setInterval =>
-    conn.message
-      devices: [meshbluJSON.uuid]
-      topic: 'hello-my-friend'
-      id: i
-    debug 'sent message', id: i
-    i++
-  , 1000
+setInterval =>
+  pendingMessages = messageBuster.getPendingMessages()
 
-conn.on 'notReady', (error) =>
-  debug 'notReady', error
+  ohUhMessages = _.filter _.keys(pendingMessages), (id) =>
+    FIVESECONDSAGO = _.now() - 5000;
+    return pendingMessages[id] < FIVESECONDSAGO
+
+  numberOfMessages = _.size(ohUhMessages)
+  return debug 'no pending messages' unless numberOfMessages
+
+  debug 'notifying cloudwatch', numberOfMessages
+  child = exec "./notifyCloudWatch.sh #{numberOfMessages}", (error, stdout, stderr) =>
+    debug 'notify stdout', stdout
+    debug 'notify stderr', stderr
+    debug 'notify exec error: ', error if error?
+    messageBuster.clearPendingMessages()
+, 3000
