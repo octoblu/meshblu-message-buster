@@ -14,11 +14,10 @@ class MessageBuster
   startBuser: =>
     @meshblu.subscribe()
     @meshblu.onMessage (message) =>
-      debug "received message for #{@number}: ", message.id, @pendingMessages[message.id]?
+      debug "received message for #{@number}: ", id: message.id
       delete @pendingMessages[message.id]
-
     @sendMessage()
-    @interval = setInterval @sendMessage, 1000
+    @interval = setInterval @sendMessage, 2000
 
   sendMessage: =>
     @meshblu.sendMessage

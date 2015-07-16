@@ -4,7 +4,7 @@ debug    = require('debug')('meshblu-message-buster:mass')
 
 last = 0
 _.times 100, (number) =>
-  last += 40
+  last += 10
   doThing = (currentLast) =>
     new DoThings(number).start()
   _.delay doThing, last

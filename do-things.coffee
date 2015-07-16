@@ -5,7 +5,7 @@ MessageBuster = require './message-buster'
 Notify        = require './notify'
 
 class DoThings
-  constructor: (@number) ->
+  constructor: (@number=1) ->
     meshbluConfig = new MeshbluConfig {}
 
     @messageBuster = new MessageBuster @number, meshbluConfig.toJSON()
@@ -17,19 +17,18 @@ class DoThings
     debug 'starting message buster', @number
     setInterval =>
       pendingMessages = @messageBuster.getPendingMessages()
+      totalPending = _.size(pendingMessages)
       ohUhMessages = _.filter _.keys(pendingMessages), (id) =>
-        ONESECONDSAGO = _.now() - 1000;
+        ONESECONDSAGO = _.now() - 5000;
         return pendingMessages[id] < ONESECONDSAGO
 
       numberOfMessages = _.size(ohUhMessages)
 
       @messageBuster.clearPendingMessages() if numberOfMessages > 100
 
-      max = _.max _.keys(ohUhMessages)
-      min = _.min _.keys(ohUhMessages)
-      debug "pending messages for #{@number}: ", min, '-', max if numberOfMessages > 0
+      debug "pending messages for #{@number}: ", numberOfMessages if numberOfMessages > 0
       # @notify.cloudWatch numberOfMessages
-    , 1000
+    , 5000
 
     setInterval =>
       debug 'restart'
