@@ -1,10 +1,9 @@
-meshblu     = require 'meshblu'
 _           = require 'lodash'
 debug       = require('debug')('meshblu-message-buster:message-buster')
+Meshblu     = require './meshblu.coffee'
 
 class MessageBuster
-  constructor: (@meshbluJSON={}) ->
-    @meshbluJSON.options = transports: ['websocket'];
+  constructor: (@number, @meshbluJSON={}) ->
     @pendingMessages = {}
     @iter = 0
 
@@ -13,37 +12,34 @@ class MessageBuster
       @startBuser()
 
   startBuser: =>
-    @conn.subscribe uuid: @meshbluJSON.uuid
-    @conn.on 'message', (message) =>
-      debug 'received message', message
+    @meshblu.subscribe()
+    @meshblu.onMessage (message) =>
+      debug "received message for #{@number}: ", message.id, @pendingMessages[message.id]?
       delete @pendingMessages[message.id]
 
-    @interval = setInterval =>
-      @conn.message
-        devices: [@meshbluJSON.uuid]
-        topic: 'hello-my-friend'
-        id: @iter
-      @pendingMessages[@iter] = _.now();
-      debug 'sent message', id: @iter
-      @iter++
-    , 2500
+    @sendMessage()
+    @interval = setInterval @sendMessage, 1000
+
+  sendMessage: =>
+    @meshblu.sendMessage
+      devices: [@meshbluJSON.uuid]
+      topic: 'hello-my-friend'
+      id: @iter
+      number: @number
+    @pendingMessages[@iter] = _.now();
+    debug "sent message for #{@number}: ", id: @iter
+    @iter++
 
   createConnection: (callback=->)=>
-    @conn = meshblu.createConnection @meshbluJSON
-    @conn.once 'ready', (config) =>
-      debug 'onReady', config
+    @meshblu = new Meshblu @meshbluJSON
+    @meshblu.startPlainMeshblu =>
+      debug 'connected'
       callback()
-
-    @conn.on 'notReady', (error) =>
-      debug 'notReady', error
-
-    @conn.on 'disconnect', (error) =>
-      debug 'disconnect', error
 
   restart: =>
     debug 'restart'
     clearInterval @interval
-    @conn.close()
+    @meshblu.conn.close()
     @pendingMessages = {}
     @start()
 
