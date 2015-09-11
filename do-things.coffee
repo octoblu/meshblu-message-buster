@@ -14,7 +14,7 @@ class DoThings
     @notify = new Notify
 
   start: =>
-    debug 'starting message buster', @number
+    console.log 'starting message buster', @number
     setInterval =>
       pendingMessages = @messageBuster.getPendingMessages()
       totalPending = _.size(pendingMessages)
@@ -26,12 +26,13 @@ class DoThings
 
       @messageBuster.clearPendingMessages() if numberOfMessages > 100
 
-      debug "pending messages for #{@number}: ", numberOfMessages if numberOfMessages > 0
+      console.log "pending messages for #{@number}: ", numberOfMessages if numberOfMessages > 0
+
       # @notify.cloudWatch numberOfMessages
     , 5000
 
     setInterval =>
-      debug 'restart'
+      console.log 'restart'
       @messageBuster.restart()
     , 120 * 60 * 1000
 
