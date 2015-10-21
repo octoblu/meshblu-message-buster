@@ -1,4 +1,4 @@
-debug       = require('debug')('meshblu-message-buster:meshblu')
+debug       = require('debug')('meshblu-message-dangler:meshblu')
 meshblu     = require 'meshblu'
 MeshbluSocketIO = require 'meshblu-socket.io'
 MeshbluWebsocket = require 'meshblu-websocket'

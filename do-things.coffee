@@ -1,7 +1,7 @@
 _             = require 'lodash'
-debug         = require('debug')('meshblu-message-buster:do-things')
+debug         = require('debug')('meshblu-message-dangler:do-things')
 MeshbluConfig = require 'meshblu-config'
-MessageBuster = require './message-buster'
+MessageBuster = require './message-dangler'
 
 class DoThings
   constructor: (@number=1, @sendMessageType='websocket') ->

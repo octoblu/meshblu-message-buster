@@ -1,5 +1,5 @@
 _             = require 'lodash'
-debug         = require('debug')('meshblu-message-buster:message-buster')
+debug         = require('debug')('meshblu-message-dangler:message-dangler')
 Meshblu       = require './meshblu.coffee'
 MeshbluHttp   = require 'meshblu-http'
 

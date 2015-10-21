@@ -1,5 +1,5 @@
 {
-  "name": "meshblu-message-buster",
+  "name": "meshblu-message-dangler",
   "version": "1.1.2",
   "description": "Meshblu Message Bus Tester",
   "main": "index.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/octoblu/meshblu-message-buster.git"
+    "url": "git+https://github.com/octoblu/meshblu-message-dangler.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/octoblu/meshblu-message-buster/issues"
+    "url": "https://github.com/octoblu/meshblu-message-dangler/issues"
   },
-  "homepage": "https://github.com/octoblu/meshblu-message-buster#readme",
+  "homepage": "https://github.com/octoblu/meshblu-message-dangler#readme",
   "dependencies": {
     "coffee-script": "^1.9.3",
     "debug": "^2.2.0",

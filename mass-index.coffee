@@ -1,6 +1,6 @@
 _        = require 'lodash'
 DoThings = require './do-things.coffee'
-debug    = require('debug')('meshblu-message-buster:mass')
+debug    = require('debug')('meshblu-message-dangler:mass')
 
 last = 0
 _.times 100, (number) =>

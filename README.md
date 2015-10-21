@@ -1,2 +1,2 @@
-# meshblu-message-buster
+# meshblu-message-dangler
 Test the Meshblu message bus

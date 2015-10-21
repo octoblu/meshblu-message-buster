@@ -1,5 +1,5 @@
 DoThings = require './do-things.coffee'
-debug    = require('debug')('meshblu-message-buster:index')
+debug    = require('debug')('meshblu-message-dangler:index')
 
 console.log 'Initializing websocket...'
 new DoThings(1, 'websocket').start()
