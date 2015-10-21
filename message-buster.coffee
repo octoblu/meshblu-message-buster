@@ -1,9 +1,21 @@
-_           = require 'lodash'
-debug       = require('debug')('meshblu-message-buster:message-buster')
-Meshblu     = require './meshblu.coffee'
+_             = require 'lodash'
+debug         = require('debug')('meshblu-message-buster:message-buster')
+Meshblu       = require './meshblu.coffee'
+MeshbluHttp   = require 'meshblu-http'
 
 class MessageBuster
-  constructor: (@number, @meshbluJSON={}) ->
+  constructor: (@number, @meshbluJSON={}, @sendMessageType) ->
+    @SEND_MESSAGES =
+      "websocket": @sendMessageOverWebsocket
+      "http": @sendMessageOverHttp
+      "messages-http": @sendMessageOverMessagesHttp
+
+    unless @SEND_MESSAGES[@sendMessageType]?
+      console.error "Invalid send message type. Defaulting..."
+      @sendMessageType = "websocket"
+
+    debug "Using #{@sendMessageType} for sending messages"
+
     @pendingMessages = {}
     @iter = 0
 
@@ -20,14 +32,30 @@ class MessageBuster
     @interval = setInterval @sendMessage, 2000
 
   sendMessage: =>
-    @meshblu.sendMessage
+    message =
       devices: [@meshbluJSON.uuid]
       topic: 'hello-my-friend'
       id: @iter
       number: @number
+
+    @SEND_MESSAGES[@sendMessageType] message
     @pendingMessages[@iter] = _.now();
     debug "sent message for #{@number}: ", id: @iter
     @iter++
+
+  sendMessageOverWebsocket: (message) =>
+    @meshblu.sendMessage message
+
+  sendMessageOverHttp: (message) =>
+    meshbluHttp = new MeshbluHttp @meshbluJSON
+    meshbluHttp.message message
+
+  sendMessageOverMessagesHttp: (message) =>
+    newMeshbluJSON = _.cloneDeep @meshbluJSON
+    newMeshbluJSON.server = process.env.MESHBLU_MESSAGES_SERVER || 'meshblu-messages.octoblu.com'
+    newMeshbluJSON.port = process.env.MESHBLU_MESSAGES_PORT || 443
+    meshbluHttp = new MeshbluHttp newMeshbluJSON
+    meshbluHttp.message message
 
   createConnection: (callback=->)=>
     @meshblu = new Meshblu @meshbluJSON

@@ -1,5 +1,5 @@
 DoThings = require './do-things.coffee'
 debug    = require('debug')('meshblu-message-buster:index')
 
-debug 'starting'
+console.log 'starting...'
 new DoThings().start()

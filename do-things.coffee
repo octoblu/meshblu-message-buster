@@ -2,37 +2,34 @@ _             = require 'lodash'
 debug         = require('debug')('meshblu-message-buster:do-things')
 MeshbluConfig = require 'meshblu-config'
 MessageBuster = require './message-buster'
-Notify        = require './notify'
 
 class DoThings
-  constructor: (@number=1) ->
+  constructor: (@number=1, @sendMessageType='websocket') ->
     meshbluConfig = new MeshbluConfig {}
 
-    @messageBuster = new MessageBuster @number, meshbluConfig.toJSON()
+    @messageBuster = new MessageBuster @number, meshbluConfig.toJSON(), @sendMessageType
     @messageBuster.start()
 
-    @notify = new Notify
-
   start: =>
-    console.log 'starting message buster', @number
+    console.log "Starting...[#{@sendMessageType}:#{@number}]"
     setInterval =>
       pendingMessages = @messageBuster.getPendingMessages()
       totalPending = _.size(pendingMessages)
       ohUhMessages = _.filter _.keys(pendingMessages), (id) =>
-        ONESECONDSAGO = _.now() - 5000;
-        return pendingMessages[id] < ONESECONDSAGO
+        FIVESECONDSAGO = _.now() - 5000;
+        return pendingMessages[id] < FIVESECONDSAGO
 
       numberOfMessages = _.size(ohUhMessages)
 
       @messageBuster.clearPendingMessages() if numberOfMessages > 100
 
-      console.log "pending messages for #{@number}: ", numberOfMessages if numberOfMessages > 0
-
-      # @notify.cloudWatch numberOfMessages
+      console.log "Everything is all good [#{@sendMessageType}:#{@number}]: ", numberOfMessages if numberOfMessages == 0
+      console.log "Pending messages [#{@sendMessageType}:#{@number}]: ", numberOfMessages if numberOfMessages > 0
+      console.log "OH NO! TOO MANY PENDING MESSAGES!!! [#{@sendMessageType}:#{@number}]" if numberOfMessages > 10
     , 5000
 
     setInterval =>
-      console.log 'restart'
+      console.log "Restarting [#{@sendMessageType}:#{@number}]..."
       @messageBuster.restart()
     , 120 * 60 * 1000
 
