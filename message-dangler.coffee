@@ -3,7 +3,7 @@ debug         = require('debug')('meshblu-message-dangler:message-dangler')
 Meshblu       = require './meshblu.coffee'
 MeshbluHttp   = require 'meshblu-http'
 
-class MessageBuster
+class MessageDangler
   constructor: (@number, @meshbluJSON={}, @sendMessageType) ->
     @SEND_MESSAGES =
       "websocket": @sendMessageOverWebsocket
@@ -73,4 +73,4 @@ class MessageBuster
   getPendingMessages: => @pendingMessages
   clearPendingMessages: => @pendingMessages = {}
 
-module.exports = MessageBuster
+module.exports = MessageDangler

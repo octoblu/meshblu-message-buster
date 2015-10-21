@@ -1,19 +1,23 @@
 _             = require 'lodash'
 debug         = require('debug')('meshblu-message-dangler:do-things')
 MeshbluConfig = require 'meshblu-config'
-MessageBuster = require './message-dangler'
+MessageDangler = require './message-dangler'
 
 class DoThings
-  constructor: (@number=1, @sendMessageType='websocket') ->
+  constructor: (number=1, sendMessageType='websocket', meshbluServer='meshblu.octoblu.com', meshbluPort=443) ->
     meshbluConfig = new MeshbluConfig {}
 
-    @messageBuster = new MessageBuster @number, meshbluConfig.toJSON(), @sendMessageType
-    @messageBuster.start()
+    meshbluJSON = _.cloneDeep meshbluConfig.toJSON()
+    meshbluJSON.server = meshbluServer
+    meshbluJSON.port = meshbluPort
+    @danglerID = "[#{sendMessageType}:#{number}](#{meshbluServer})"
+    @messageDangler = new MessageDangler number, meshbluJSON, sendMessageType
+    @messageDangler.start()
 
   start: =>
-    console.log "Starting...[#{@sendMessageType}:#{@number}]"
+    console.log "Starting...#{@danglerID}"
     setInterval =>
-      pendingMessages = @messageBuster.getPendingMessages()
+      pendingMessages = @messageDangler.getPendingMessages()
       totalPending = _.size(pendingMessages)
       ohUhMessages = _.filter _.keys(pendingMessages), (id) =>
         FIVESECONDSAGO = _.now() - 5000;
@@ -21,16 +25,16 @@ class DoThings
 
       numberOfMessages = _.size(ohUhMessages)
 
-      @messageBuster.clearPendingMessages() if numberOfMessages > 100
+      @messageDangler.clearPendingMessages() if numberOfMessages > 100
 
-      console.log "Everything is all good [#{@sendMessageType}:#{@number}]: ", numberOfMessages if numberOfMessages == 0
-      console.log "Pending messages [#{@sendMessageType}:#{@number}]: ", numberOfMessages if numberOfMessages > 0
-      console.log "OH NO! TOO MANY PENDING MESSAGES!!! [#{@sendMessageType}:#{@number}]" if numberOfMessages > 10
+      console.log "Everything is all good #{@danglerID}: ", numberOfMessages if numberOfMessages == 0
+      console.log "Pending messages #{@danglerID}: ", numberOfMessages if numberOfMessages > 0
+      console.log "OH NO! TOO MANY PENDING MESSAGES!!! #{@danglerID}" if numberOfMessages > 10
     , 5000
 
     setInterval =>
-      console.log "Restarting [#{@sendMessageType}:#{@number}]..."
-      @messageBuster.restart()
+      console.log "Restarting #{@danglerID}..."
+      @messageDangler.restart()
     , 120 * 60 * 1000
 
 module.exports = DoThings
