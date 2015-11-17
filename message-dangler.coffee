@@ -8,7 +8,6 @@ class MessageDangler
     @SEND_MESSAGES =
       "websocket": @sendMessageOverWebsocket
       "http": @sendMessageOverHttp
-      "messages-http": @sendMessageOverMessagesHttp
 
     unless @SEND_MESSAGES[@sendMessageType]?
       console.error "Invalid send message type. Defaulting..."
@@ -48,13 +47,6 @@ class MessageDangler
 
   sendMessageOverHttp: (message) =>
     meshbluHttp = new MeshbluHttp @meshbluJSON
-    meshbluHttp.message message
-
-  sendMessageOverMessagesHttp: (message) =>
-    newMeshbluJSON = _.cloneDeep @meshbluJSON
-    newMeshbluJSON.server = process.env.MESHBLU_MESSAGES_SERVER || 'meshblu-messages.octoblu.com'
-    newMeshbluJSON.port = process.env.MESHBLU_MESSAGES_PORT || 443
-    meshbluHttp = new MeshbluHttp newMeshbluJSON
     meshbluHttp.message message
 
   createConnection: (callback=->)=>
